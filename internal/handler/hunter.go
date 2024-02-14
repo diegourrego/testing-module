@@ -5,6 +5,8 @@ import (
 	"testdoubles/internal/hunter"
 	"testdoubles/internal/positioner"
 	"testdoubles/internal/prey"
+	"testdoubles/platform/web/request"
+	"testdoubles/platform/web/response"
 )
 
 // NewHunter returns a new Hunter handler.
@@ -20,7 +22,7 @@ type Hunter struct {
 	pr prey.Prey
 }
 
-// RequestBodyConfigPrey is an struct to configure the prey for the hunter in JSON format.
+// RequestBodyConfigPrey is a struct to configure the prey for the hunter in JSON format.
 type RequestBodyConfigPrey struct {
 	Speed    float64              `json:"speed"`
 	Position *positioner.Position `json:"position"`
@@ -30,10 +32,20 @@ type RequestBodyConfigPrey struct {
 func (h *Hunter) ConfigurePrey() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// request
-
+		var body RequestBodyConfigPrey
+		err := request.JSON(r, &body)
+		if err != nil {
+			response.Error(w, http.StatusBadRequest, "invalid request body")
+			return
+		}
 		// process
+		h.pr.Configure(body.Speed, body.Position)
 
 		// response
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "prey configured",
+			"data":    nil,
+		})
 	}
 }
 
