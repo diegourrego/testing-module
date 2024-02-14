@@ -59,10 +59,21 @@ type RequestBodyConfigHunter struct {
 func (h *Hunter) ConfigureHunter() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// request
+		var body RequestBodyConfigHunter
+		err := request.JSON(r, &body)
+		if err != nil {
+			response.Error(w, http.StatusBadRequest, "invalid body request")
+			return
+		}
 
 		// process
+		h.ht.Configure(body.Speed, body.Position)
 
 		// response
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "hunter configured",
+			"data":    nil,
+		})
 	}
 }
 
