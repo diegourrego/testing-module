@@ -24,8 +24,7 @@ func (m *MockCatchSimulator) CanCatch(hunter, prey *Subject) (canCatch bool) {
 	if m.FuncCanCatch != nil {
 		m.FuncCanCatch(hunter, prey)
 	}
-	// TODO: Preguntar esto!
-	// Si no devuelve esta función un error no hace nada?
+
 	canCatch = output.Bool(0)
 	return
 }
